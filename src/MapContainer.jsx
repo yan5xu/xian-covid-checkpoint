@@ -104,7 +104,7 @@ const Map = () => {
     <div className="home_div">
       <div className="map-title">
         <h3>
-          供收录检测点{points.length}个<br />
+          共收录检测点{points.length}个<br />
           点击图标可查看检测点名称
           <br />
           信息补充，请联系wx: cplife

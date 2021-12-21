@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AMapLoader from "@amap/amap-jsapi-loader";
-import "./MapContainer.css";
+import "./index.css";
 import axios, { AxiosInstance } from "axios";
 
 const defaultSize = 1;

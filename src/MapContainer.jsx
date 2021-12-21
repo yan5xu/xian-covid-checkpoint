@@ -80,6 +80,7 @@ const Map = () => {
             map: _map,
             ...item,
           });
+          // create click event
           marker.on("click", (e) => {
             console.log("item:", e);
             let target = e.target;
@@ -88,12 +89,10 @@ const Map = () => {
               content: target._originOpts.title,
             });
           });
-
           _map.add(marker);
         }
 
         getLocation(AMap, _map);
-
         setMap(_map);
       })
       .catch((e) => {

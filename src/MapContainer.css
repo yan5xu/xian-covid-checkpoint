@@ -1,0 +1,32 @@
+.home_div,#map{
+    padding: 0px;
+    margin: 0px;
+    width: 100%;
+    height: 100%;
+}
+.map-title{
+    position:absolute;
+    z-index: 1;
+    width: 100%;
+    height: 50px;
+    background-color: rgba(27, 25, 27, 0.884);
+
+}
+h3{
+   position:absolute;
+   left: 10px;
+   z-index: 2;
+   color: white;
+}
+
+.amap-marker-label{
+    border: 0;
+    background-color: transparent;
+}
+
+.info{
+    position: relative;
+    top: 0;
+    right: 0;
+    min-width: 0;
+}

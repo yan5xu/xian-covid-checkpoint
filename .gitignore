@@ -1,0 +1,16 @@
+config.yaml
+log/
+docs/docs.go
+node_modules
+src/.DS_Store
+.DS_Store
+output/
+ormconfig.json
+.tomg-config
+temp/
+tmp/
+yarn.lock
+run_docker.sh
+package.json
+build/
+package-lock.json

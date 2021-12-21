@@ -4,7 +4,7 @@ import "./MapContainer.css";
 import axios, { AxiosInstance } from "axios";
 
 const getCheckPoint = async () => {
-  const res = await axios.post("http://81.70.149.112:8098/v1/graphql", {
+  const res = await axios.post("https://ywhasura.xzllo.com/v1/graphql", {
     query:
       "query getCheckPoint {\n  check_point {\n    id\n    name\n    position\n    type\n  }\n}\n",
     variables: null,
@@ -77,13 +77,11 @@ const Map = () => {
         });
         // marker点击
         function markerClick(e) {
-          console.log(e);
           infoWindow.setContent(e.target.content); //必须要用setContent方法
           infoWindow.open(_map, e.target.getPosition());
         }
         // 加载点
         const point = await getCheckPoint();
-        console.log(point);
         setPoints(point);
         //! 加点
         for (let item of point) {

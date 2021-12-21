@@ -68,7 +68,18 @@ const Map = () => {
           visible: true, //是否可见
           center: [108.94703, 34.25943], // 初始点
         });
-
+        // 信息窗体
+        var infoWindow = new AMap.InfoWindow({
+          isCustom: true, //使用自定义窗体
+          closeWhenClickMap: true, // 点击地图关闭信息窗口
+          offset: new AMap.Pixel(0, -50),
+        });
+        // marker点击
+        function markerClick(e) {
+          console.log(e);
+          infoWindow.setContent(e.target.content); //必须要用setContent方法
+          infoWindow.open(_map, e.target.getPosition());
+        }
         // 加载点
         const point = await getCheckPoint();
         console.log(point);
@@ -80,15 +91,24 @@ const Map = () => {
             ...item,
           });
           // create click event
-          marker.on("click", (e) => {
-              console.log("item:", e)
-              let target = e.target;
-              marker.setLabel({
-                  offset: new AMap.Pixel(-50, -25),
-                  content: target._originOpts.title
-              });
-          });
+          // marker.on("click", (e) => {
+          //     console.log("item:", e)
+          //     let target = e.target;
+          //     marker.setLabel({
+          //         offset: new AMap.Pixel(-50, -25),
+          //         content: target._originOpts.title
+          //     });
+          // });
           _map.add(marker);
+
+          //添加marker点击事件
+          marker.on("click", markerClick);
+          marker.emit("click", { target: marker });
+          // 信息窗体内容 html字符串
+          marker.content =
+            "<div  style='background-color: white;' '> <p>名称:<br/>" +
+            item.title +
+            "</p></div>";
         }
 
         getLocation(AMap, _map);

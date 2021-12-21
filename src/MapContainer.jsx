@@ -47,6 +47,7 @@ const getLocation = (AMap, _map) => {
 
 const Map = () => {
   const [map, setMap] = useState();
+  const [points, setPoints] = useState([]);
   useEffect(() => {
     AMapLoader.load({
       key: "e10e14f5f4232d3f6bef02d34bb4f716", //需要设置您申请的key
@@ -83,7 +84,7 @@ const Map = () => {
         // 加载点
         const point = await getCheckPoint();
         console.log(point);
-
+        setPoints(point);
         //! 加点
         for (let item of point) {
           let marker = new AMap.Marker({
@@ -119,7 +120,12 @@ const Map = () => {
   return (
     <div className="home_div">
       <div className="map-title">
-        <h3>信息补充，请联系wx: cplife</h3>
+        <h3>
+          供收录检测点{points.length}个<br />
+          点击图标可查看检测点名称
+          <br />
+          信息补充，请联系wx: cplife
+        </h3>
       </div>
       <div id="mapcontainer" className="map" style={{ height: "100%" }} />
     </div>

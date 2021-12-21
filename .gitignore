@@ -13,3 +13,4 @@ yarn.lock
 run_docker.sh
 build/
 package-lock.json
+.env

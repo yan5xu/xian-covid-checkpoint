@@ -79,11 +79,19 @@ const Map = () => {
             map: _map,
             ...item,
           });
+          // create click event
+          marker.on("click", (e) => {
+              console.log("item:", e)
+              let target = e.target;
+              marker.setLabel({
+                  offset: new AMap.Pixel(-50, -25),
+                  content: target._originOpts.title
+              });
+          });
           _map.add(marker);
         }
 
         getLocation(AMap, _map);
-
         setMap(_map);
       })
       .catch((e) => {

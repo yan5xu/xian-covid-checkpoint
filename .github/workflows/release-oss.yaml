@@ -2,7 +2,7 @@ name: release-oss
 on:
   push:
     branches:
-      - master # Change this to your default branch
+      - dev # Change this to your default branch
 jobs:
   main:
     name: main

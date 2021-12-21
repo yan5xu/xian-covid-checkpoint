@@ -62,6 +62,10 @@ const Map = () => {
       },
     })
       .then(async (AMap) => {
+        // 渲染marker存放
+        const markerArr = [];
+        // 加载点
+        const point = await getCheckPoint();
         const _map = new AMap.Map("mapcontainer", {
           viewMode: "3D",
           zoom: 13,
@@ -69,6 +73,75 @@ const Map = () => {
           visible: true, //是否可见
           center: [108.94703, 34.25943], // 初始点
         });
+
+        //缩放级别begin=============
+        AMap.Event.addListener(_map, "zoomend", function () {
+          const sfjb = _map.getZoom();
+          if (sfjb < 13) {
+            for (let i = 0; i < markerArr.length; i += 1) {
+              markerArr[i].hide();
+            }
+          } else {
+            for (let i = 0; i < markerArr.length; i += 1) {
+              markerArr[i].show();
+            }
+          }
+        });
+        //缩放级别end=============
+
+        const refresh = function () {
+          //得到屏幕可视范围的坐标，画出矩形
+
+          const tmapBounds = _map.getBounds();
+
+          const southWest = new AMap.LngLat(
+            tmapBounds.southWest.lng,
+            tmapBounds.southWest.lat
+          );
+          const northEast = new AMap.LngLat(
+            tmapBounds.northEast.lng,
+            tmapBounds.northEast.lat
+          );
+
+          const bounds = new AMap.Bounds(southWest, northEast);
+          const rectangle = new AMap.Rectangle({
+            map: _map,
+            bounds: bounds,
+            strokeColor: "#FFFFFF",
+            strokeWeight: 1,
+            strokeOpacity: 0,
+            fillOpacity: 0,
+            zIndex: 0,
+            bubble: true,
+          });
+
+          for (let i = 0, marker; i < point.length; i++) {
+            var myLngLat = new AMap.LngLat(
+              point[i].position[0],
+              point[i].position[1]
+            );
+            // 标点坐标在屏幕显示范围内且图层大于13   地图缩放比例过大时，会将所有隐藏
+            if (rectangle.contains(myLngLat) && _map.getZoom() > 13) {
+              //如果点在矩形内则输出
+              marker = new AMap.Marker({
+                map: _map,
+                position: point[i].position,
+                title: point[i].title,
+              });
+              marker.content = point[i].title;
+              marker.on("click", markerClick);
+              // 满足条件后将标点放入标点数组
+              markerArr.push(marker);
+            }
+          }
+        };
+        //地图平移结束begin=============
+        AMap.Event.addListener(_map, "moveend", function () {
+          _map.remove(markerArr); //只删除marker点组
+          refresh();
+        });
+        //地图平移结束end=============
+
         // 信息窗体
         var infoWindow = new AMap.InfoWindow({
           isCustom: true, //使用自定义窗体
@@ -77,38 +150,15 @@ const Map = () => {
         });
         // marker点击
         function markerClick(e) {
-          console.log(e);
+          // console.log(e);
           infoWindow.setContent(e.target.content); //必须要用setContent方法
           infoWindow.open(_map, e.target.getPosition());
         }
-        // 加载点
-        const point = await getCheckPoint();
+
         console.log(point);
         setPoints(point);
-        //! 加点
-        for (let item of point) {
-          let marker = new AMap.Marker({
-            map: _map,
-            ...item,
-          });
-          // create click event
-          // marker.on("click", (e) => {
-          //     console.log("item:", e)
-          //     let target = e.target;
-          //     marker.setLabel({
-          //         offset: new AMap.Pixel(-50, -25),
-          //         content: target._originOpts.title
-          //     });
-          // });
-          _map.add(marker);
-
-          //添加marker点击事件
-          marker.on("click", markerClick);
-          marker.emit("click", { target: marker });
-          // 信息窗体内容 html字符串
-          marker.content = item.title;
-        }
-
+        // !加点
+        _map.add(markerArr);
         getLocation(AMap, _map);
         setMap(_map);
       })

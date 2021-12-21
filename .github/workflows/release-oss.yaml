@@ -1,0 +1,26 @@
+name: release-oss
+on:
+  push:
+    branches:
+      - master # Change this to your default branch
+jobs:
+  main:
+    name: main
+    runs-on: ubuntu-latest
+    steps:
+      - name: 切换仓库
+        uses: actions/checkout@master
+      - name: 准备Node环境
+        uses: actions/setup-node@master
+        with:
+          node-version: 12.13.0
+      - name: 安装依赖以及编译
+        run: npm i && npm run build
+      - name: 上传到OSS
+        uses: fangbinwei/aliyun-oss-website-action@v1
+        with:
+            accessKeyId: ${{ secrets.ACCESS_KEY_ID }}
+            accessKeySecret: ${{ secrets.ACCESS_KEY_SECRET }}
+            bucket: "yw-public"
+            endpoint: "oss-cn-beijing.aliyuncs.com"
+            folder: "build"

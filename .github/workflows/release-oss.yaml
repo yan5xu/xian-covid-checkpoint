@@ -2,7 +2,7 @@ name: release-oss
 on:
   push:
     branches:
-      - dev # Change this to your default branch
+      - main
 jobs:
   main:
     name: main
@@ -21,6 +21,7 @@ jobs:
         with:
             accessKeyId: ${{ secrets.ACCESS_KEY_ID }}
             accessKeySecret: ${{ secrets.ACCESS_KEY_SECRET }}
-            bucket: "yw-public1111"
+            bucket: "yw-public"
             endpoint: "oss-cn-beijing.aliyuncs.com"
             folder: "build"
+            skipSetting: true

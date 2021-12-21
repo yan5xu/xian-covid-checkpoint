@@ -118,12 +118,13 @@ const Map = () => {
   return (
     <div className="home_div">
       <div className="map-title">
-        <h3>
-          共收录检测点{points.length}个<br />
+        <h4>
+          共收录检测点{points.length}个，检测点实时动态功能正在开发
+          <br />
           点击图标可查看检测点名称
           <br />
-          信息补充，请联系wx: cplife
-        </h3>
+          其他请联系wx: cplife
+        </h4>
       </div>
       <div id="mapcontainer" className="map" style={{ height: "100%" }} />
     </div>

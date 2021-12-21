@@ -3,6 +3,8 @@ import AMapLoader from "@amap/amap-jsapi-loader";
 import "./MapContainer.css";
 import axios, { AxiosInstance } from "axios";
 
+const defaultSize = 1;
+
 const getCheckPoint = async () => {
   const res = await axios.post("https://ywhasura.xzllo.com/v1/graphql", {
     query:
@@ -68,7 +70,7 @@ const Map = () => {
         const point = await getCheckPoint();
         const _map = new AMap.Map("mapcontainer", {
           viewMode: "3D",
-          zoom: 13,
+          zoom: defaultSize,
           zooms: [2, 22],
           visible: true, //是否可见
           center: [108.94703, 34.25943], // 初始点
@@ -77,7 +79,7 @@ const Map = () => {
         //缩放级别begin=============
         AMap.Event.addListener(_map, "zoomend", function () {
           const sfjb = _map.getZoom();
-          if (sfjb < 13) {
+          if (sfjb < defaultSize) {
             for (let i = 0; i < markerArr.length; i += 1) {
               markerArr[i].hide();
             }

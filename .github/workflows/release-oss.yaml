@@ -21,6 +21,6 @@ jobs:
         with:
             accessKeyId: ${{ secrets.ACCESS_KEY_ID }}
             accessKeySecret: ${{ secrets.ACCESS_KEY_SECRET }}
-            bucket: "yw-public"
+            bucket: "yw-public1111"
             endpoint: "oss-cn-beijing.aliyuncs.com"
             folder: "build"

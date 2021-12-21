@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: 12.13.0
       - name: 安装依赖以及编译
-        run: npm i && npm run build
+        run: npm i && CI= npm run build
       - name: 上传到OSS
         uses: fangbinwei/aliyun-oss-website-action@v1
         with:

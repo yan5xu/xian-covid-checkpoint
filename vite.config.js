@@ -8,13 +8,6 @@ export default defineConfig({
     host: '0.0.0.0',
     open: true
   },
-  css: {
-    preprocessorOptions: {
-      less: {
-        javascriptEnabled: true
-      }
-    }
-  },
   build: {
     target: 'es2015',
     outDir: "build",
@@ -28,9 +21,15 @@ export default defineConfig({
   plugins: [
     react(), 
     styleImport({
-      resolves: [() => {
-
-      }]
+      libs: [
+        {
+          libraryName: 'zarm',
+          esModule: true,
+          resolveStyle: (name) => {
+            return `zarm/es/${name}/style/index`
+          },
+        },
+      ],
     })
   ]
 })

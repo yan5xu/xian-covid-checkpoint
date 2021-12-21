@@ -105,10 +105,7 @@ const Map = () => {
           marker.on("click", markerClick);
           marker.emit("click", { target: marker });
           // 信息窗体内容 html字符串
-          marker.content =
-            "<div  style='background-color: white;' '> <p>名称:<br/>" +
-            item.title +
-            "</p></div>";
+          marker.content = item.title;
         }
 
         getLocation(AMap, _map);

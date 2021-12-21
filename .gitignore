@@ -11,6 +11,5 @@ temp/
 tmp/
 yarn.lock
 run_docker.sh
-package.json
 build/
 package-lock.json

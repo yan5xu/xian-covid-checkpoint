@@ -4,7 +4,7 @@ import "./MapContainer.css";
 import axios, { AxiosInstance } from "axios";
 
 const getCheckPoint = async () => {
-  const res = await axios.post("http://81.70.149.112:8098/v1/graphql", {
+  const res = await axios.post("https://ywhasura.xzllo.com/v1/graphql", {
     query:
       "query getCheckPoint {\n  check_point {\n    id\n    name\n    position\n    type\n  }\n}\n",
     variables: null,
@@ -154,8 +154,6 @@ const Map = () => {
           infoWindow.setContent(e.target.content); //必须要用setContent方法
           infoWindow.open(_map, e.target.getPosition());
         }
-
-        console.log(point);
         setPoints(point);
         // !加点
         _map.add(markerArr);
@@ -170,12 +168,13 @@ const Map = () => {
   return (
     <div className="home_div">
       <div className="map-title">
-        <h3>
-          供收录检测点{points.length}个<br />
+        <h4>
+          共收录检测点{points.length}个，检测点实时动态功能正在开发
+          <br />
           点击图标可查看检测点名称
           <br />
-          信息补充，请联系wx: cplife
-        </h3>
+          其他请联系wx: cplife
+        </h4>
       </div>
       <div id="mapcontainer" className="map" style={{ height: "100%" }} />
     </div>

@@ -100,7 +100,7 @@ const Map = () => {
   return (
     <div className="home_div">
       <div className="map-title">
-        <h4>
+        <h4 onClick={loaded}>
           共收录检测点{points.length}个，检测点实时动态功能正在开发
           <br />
           点击图标可查看检测点详情以及其他信息

@@ -1,5 +1,5 @@
-import './App.css';
-import MapComponent from './MapContainer';
+import "./App.css";
+import MapComponent from "./pages/MapContainer";
 
 function App() {
   return (

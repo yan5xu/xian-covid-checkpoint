@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import AMapLoader from "@amap/amap-jsapi-loader";
-import "./MapContainer.css";
+import "./index.scss";
 import axios, { AxiosInstance } from "axios";
 
-const defaultSize = 1;
+const defaultSize = 0;
 
 const getCheckPoint = async () => {
   const res = await axios.post("https://ywhasura.xzllo.com/v1/graphql", {
@@ -123,7 +123,7 @@ const Map = () => {
               point[i].position[1]
             );
             // 标点坐标在屏幕显示范围内且图层大于13   地图缩放比例过大时，会将所有隐藏
-            if (rectangle.contains(myLngLat) && _map.getZoom() > 13) {
+            if (rectangle.contains(myLngLat) && _map.getZoom() > defaultSize) {
               //如果点在矩形内则输出
               marker = new AMap.Marker({
                 map: _map,
@@ -153,7 +153,8 @@ const Map = () => {
         // marker点击
         function markerClick(e) {
           // console.log(e);
-          infoWindow.setContent(e.target.content); //必须要用setContent方法
+          const content = `<div class="marker-content">${e.target.content}</div>`;
+          infoWindow.setContent(content); //必须要用setContent方法
           infoWindow.open(_map, e.target.getPosition());
         }
         setPoints(point);

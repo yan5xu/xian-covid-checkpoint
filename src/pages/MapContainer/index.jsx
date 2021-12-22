@@ -1,13 +1,15 @@
-import React, { render, useEffect, useState } from "react";
-import ReactDOM from 'react-dom';
-import AMapLoader from "@amap/amap-jsapi-loader";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  Amap,
+  useAmap,
+  loadAmap,
+  loadPlugins,
+} from "@amap/amap-react";
 import "./index.scss";
-import axios, { AxiosInstance } from "axios";
+import axios from "axios";
 import { Popup } from "zarm";
 import { MakerContent } from "./components/MarkerContent";
 import { MakerPopup } from "./components/MarkerPopup";
-
-const defaultSize = 1;
 
 const getCheckPoint = async () => {
   const res = await axios.post("https://ywhasura.xzllo.com/v1/graphql", {
@@ -22,170 +24,83 @@ const getCheckPoint = async () => {
   }));
 };
 
-const getLocation = (AMap, _map) => {
-  AMap.plugin("AMap.Geolocation", function () {
-    var geolocation = new AMap.Geolocation({
-      enableHighAccuracy: true, //是否使用高精度定位，默认:true
-      timeout: 10000, //超过10秒后停止定位，默认：5s
-      buttonPosition: "RB", //定位按钮的停靠位置
-      buttonOffset: new AMap.Pixel(10, 20), //定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-      zoomToAccuracy: true, //定位成功后是否自动调整地图视野到定位点
-      noGeoLocation: 0,
-    });
-    _map.addControl(geolocation);
-    geolocation.getCurrentPosition(function (status, result) {
-      if (status === "complete") {
-        onComplete(result);
-      } else {
-        onError(result);
-      }
-    });
+// 初始化定位坐标
+const initGeoLocation = async (map) => {
+  const AMap = await loadPlugins("AMap.Geolocation");
+  const geolocation = new AMap.Geolocation({
+    enableHighAccuracy: true, //是否使用高精度定位，默认:true
+    timeout: 10000, //超过10秒后停止定位，默认：5s
+    buttonPosition: "RB", //定位按钮的停靠位置
+    buttonOffset: new AMap.Pixel(10, 20), //定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+    zoomToAccuracy: true, //定位成功后是否自动调整地图视野到定位点
+    noGeoLocation: 0,
   });
-  //解析定位结果
-  function onComplete(data) {
-    console.log(data);
-  }
-  //解析定位错误信息
-  function onError(data) {
-    console.log(data);
-  }
+
+  geolocation.getCurrentPosition((status, result) => {
+    if (status === "complete") {
+      map.setCenter(result.position);
+      map.setZoom(18);
+    }
+  });
+};
+
+const ManyPoints = (props) => {
+  const { data } = props;
+  const map = useAmap();
+  const $layer = useRef();
+
+  useEffect(() => {
+    if (!map) return;
+    if (!$layer.current) {
+      $layer.current = new window.AMap.LabelsLayer({
+        zooms: [3, 20],
+        zIndex: 1000,
+        collision: false,
+      });
+      map.add($layer.current);
+    }
+    const layer = $layer.current;
+    const markers = data.map((d) => {
+      return new window.AMap.LabelMarker({
+        position: d.position,
+        icon: {
+          type: "image",
+          image:
+            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAfCAYAAAAFkva3AAACd0lEQVR42qWU3UuTYRjG34iiw+gk6CAp2XRqsyazWRuz8c656UF/QV8URhQSNaMP5kzRudQ5Zy3zD+i0gygiZ44oogjDJJBqjMTS1Gxzm1s17+4rYmBzbXt38OPhue/r+jEG7yMQURoWZ2QHY2XGmBkm8ff0Y479er01F3N3eBPTzsQs7gQ1eJPUOETUOMzwiTvm2COH/LqyekdoK+Mz98ep4Q4XhzODPXKcH2W2rZGZupY2MiP17hWycDBXkOfec2ZzSlbXuWg39UXJPER5gx76BJmxY347EzPx/1HHy3xBD314BLF97qLYs0zG26uSQZ89VsHQ9mVUHFgh0ZuUDPrwCIfsM3OGmz/I4P0lGfTZMyvU2qaTtbd+UqHAI+ivBZf1gwnSs10q6LMnLOiuBsZ1rgjpeCCZ/gix542gvfLerXXM00FPXDJaxwKxxyMcuDSlqbEFSeNZkQz68Pz5Ampa3o3t75yl6oFY3qCHfupz0lgnS5i42hUmtTuaM8ijh35KBqovTLSp7Z+oqj+aM8ijl/YEqc+Pb2ECqq6vtM8VyQpyyKOXJgNVza8Pqy5PkbJvOSvIIZ/xpQWqcy9HKvnnV/SGM4I953zI/1e29+wLJZMs7w1RJrBHLqsMVJ55drfCFiBFz/c0MMceuZxkytNPy5hV+Y0l+hfMsc9ZBvY0+e+VtgZJ5vyWAnfMsc9LVn7qiahofkXFzsUUuGOet6zspG8D87G44zPt7l4gnLhjnrcMKE48tsmsb6mIXwWcfG/FXJKs9PijUnmTn3byE4UTd8kyUHLs4Yei69OEE/eCZPKjDwZ3tUwSzoJlsiP3RSbEGLNlfwPf80fNP6DL+QAAAABJRU5ErkJggg==",
+          size: [26, 35],
+          anchor: "bottom-center",
+        },
+      });
+    });
+    layer.add(markers);
+
+    return () => {
+      layer.remove(markers);
+    };
+  }, [map, data]);
+
+  useEffect(() => {
+    return () => {
+      if ($layer.current) {
+        $layer.current.setMap(null);
+      }
+    };
+  }, []);
+
+  return null;
 };
 
 const Map = () => {
-  const [map, setMap] = useState();
   const [points, setPoints] = useState([]);
   // makerdetail 变量 控制详情窗口展示
   const [makerPopupVisible, setMakerPopupVisible] = useState(false);
   // 渲染marker存放
-  const markerArr = [];
-
-  const refresh = async (AMap, _map) => {
-    //得到屏幕可视范围的坐标，画出矩形
-    const tmapBounds = _map.getBounds();
-    const southWest = new AMap.LngLat(
-      tmapBounds.southWest.lng,
-      tmapBounds.southWest.lat
-    );
-    const northEast = new AMap.LngLat(
-      tmapBounds.northEast.lng,
-      tmapBounds.northEast.lat
-    );
-
-    const bounds = new AMap.Bounds(southWest, northEast);
-    const rectangle = new AMap.Rectangle({
-      map: _map,
-      bounds: bounds,
-      strokeColor: "#FFFFFF",
-      strokeWeight: 1,
-      strokeOpacity: 0,
-      fillOpacity: 0,
-      zIndex: 0,
-      bubble: true,
-    });
-
-    // 加载点
-    const point = await getCheckPoint();
-
-    for (let i = 0, marker; i < point.length; i++) {
-      var myLngLat = new AMap.LngLat(
-        point[i].position[0],
-        point[i].position[1]
-      );
-      // 标点坐标在屏幕显示范围内且图层大于13 地图缩放比例过大时，会将所有隐藏
-      if (rectangle.contains(myLngLat) && _map.getZoom() > 13) {
-        //如果点在矩形内则输出
-        marker = new AMap.Marker({
-          map: _map,
-          position: point[i].position,
-          title: point[i].title,
-        });
-        // 给marker一个组件用于展示content内容
-        marker.content = ReactDOM.render(
-          <MakerContent
-            data={point[i]}
-            onOpen={() => {
-              setMakerPopupVisible(true);
-            }}
-          />
-        );
-        marker.on("click", (e) => {
-          const infoWindow = new AMap.InfoWindow({
-            isCustom: true, //使用自定义窗体
-            closeWhenClickMap: true, // 点击地图关闭信息窗口
-            offset: new AMap.Pixel(0, -50),
-          });
-          infoWindow.setContent(e.target.content); //必须要用setContent方法
-          infoWindow.open(_map, e.target.getPosition());
-        });
-        // 满足条件后将标点放入标点数组
-        markerArr.push(marker);
-      }
-    }
-    setPoints(point);
-  };
-
-  // 处理缩放结束
-  const handleZoomend = (_map) => {
-    const sfjb = _map.getZoom();
-    if (sfjb < defaultSize) {
-      for (let i = 0; i < markerArr.length; i += 1) {
-        markerArr[i].hide();
-      }
-    } else {
-      for (let i = 0; i < markerArr.length; i += 1) {
-        markerArr[i].show();
-      }
-    }
-  };
-
-  // 处理平移结束
-  const handleMoveend = (AMap, _map) => {
-    _map.remove(markerArr); //只删除marker点组
-    refresh(AMap, _map);
-  };
-
-  const loaded = async (AMap) => {
-    const _map = new AMap.Map("mapcontainer", {
-      viewMode: "3D",
-      zoom: defaultSize,
-      zooms: [2, 22],
-      visible: true, //是否可见
-      center: [108.94703, 34.25943], // 初始点
-    });
-
-    // 添加监听事件
-    AMap.Event.addListener(_map, "zoomend", () => handleZoomend(_map));
-    AMap.Event.addListener(_map, "moveend", () => handleMoveend(AMap, _map));
-
-    // !加点
-    _map.add(markerArr);
-    getLocation(AMap, _map);
-    setMap(_map);
-  };
-
-  useEffect(() => {
-    AMapLoader.load({
-      key: "e10e14f5f4232d3f6bef02d34bb4f716", //需要设置您申请的key
-      version: "2.0",
-      plugins: ["AMap.ToolBar"],
-      AMapUI: {
-        version: "1.1",
-        plugins: [],
-      },
-      Loca: {
-        version: "2.0.0",
-      },
-    })
-      .then(loaded)
-      .catch((e) => {
-        console.log(e);
-      });
-  }, []);
+  const [markerArr, setMarkerArr] = useState([]);
 
   return (
     <div className="home_div">
       <div className="map-title">
-        <h4>
+        <h4 onClick={loaded}>
           共收录检测点{points.length}个，检测点实时动态功能正在开发
           <br />
           点击图标可查看检测点详情以及其他信息
@@ -193,13 +108,21 @@ const Map = () => {
           其他请联系wx: cplife
         </h4>
       </div>
-      <div id="mapcontainer" className="map" style={{ height: "100%" }} />
-      <MakerPopup
-        visible={makerPopupVisible}
-        onClose={() => {
-          setMakerPopupVisible(false);
+      <Amap
+        viewMode="3D"
+        center={[108.94703, 34.25943]}
+        zooms={[2, 22]}
+        pitch={45}
+        rotation={20}
+        onComplete={async (e) => {
+          initGeoLocation(e);
+          // 加载点
+          const point = await getCheckPoint();
+          setPoints(point);
         }}
-      ></MakerPopup>
+      >
+        <ManyPoints data={points}></ManyPoints>
+      </Amap>
     </div>
   );
 };

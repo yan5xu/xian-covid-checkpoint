@@ -37,10 +37,11 @@ export const MakerPopup: FC<Props> = ({
   };
   const handleNavigation = async (type: MapType, navigationType: string) => {
     // 根据type定义回调函数字典
-    const cbDictionary: Record<MapType, (params: NavigationParams) => string> = {
-      "gaode": getAMapNavigationUrl,
-      // "tencent": getTencentNavigationUrl,
-    }
+    const cbDictionary: Record<MapType, (params: NavigationParams) => string> =
+      {
+        gaode: getAMapNavigationUrl,
+        // "tencent": getTencentNavigationUrl,
+      };
     Loading.show({
       content: <ActivityIndicator size="lg" />,
     });
@@ -61,9 +62,9 @@ export const MakerPopup: FC<Props> = ({
       },
     });
     // 关闭所有弹窗
-    setNavigationListVisible(false)
-    onClose && onClose()
-    window.open(url)
+    setNavigationListVisible(false);
+    onClose && onClose();
+    window.location.href(url);
   };
   return (
     <>
@@ -90,7 +91,7 @@ export const MakerPopup: FC<Props> = ({
           // },
           {
             text: "高德地图",
-            onClick: () => handleNavigation('gaode', "walkmap"),
+            onClick: () => handleNavigation("gaode", "walkmap"),
           },
           // {
           //   text: "百度地图",

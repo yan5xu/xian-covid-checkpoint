@@ -4,6 +4,7 @@ import {
   MapType,
   getMapApp,
   getAMapNavigationUrl,
+  getTencentNavigationUrl,
   NavigationParams,
 } from "../../../../utils/map";
 import "./index.scss";
@@ -34,17 +35,12 @@ export const MakerPopup: FC<Props> = ({
   const handleClickNavigation = () => {
     setNavigationListVisible(true);
   };
-  // 集中处理导航跳转的函数
-  // const handleNavigation = async <T extends () => string>(
-  //   cb: T
-  // ): Promise<string> => {
-  //   // 获取自身定位
-  //   const selfLocation = await getGeoLocation();
-  //   // 获取跳转url
-  //   const url = cb();
-  //   return url;
-  // };
-  const handleNavigation = async (type: MapType) => {
+  const handleNavigation = async (type: MapType, navigationType: string) => {
+    // 根据type定义回调函数字典
+    const cbDictionary: Record<MapType, (params: NavigationParams) => string> = {
+      "gaode": getAMapNavigationUrl,
+      // "tencent": getTencentNavigationUrl,
+    }
     Loading.show({
       content: <ActivityIndicator size="lg" />,
     });
@@ -52,12 +48,12 @@ export const MakerPopup: FC<Props> = ({
     const selfLocation = await getGeoLocation();
     Loading.hide();
     // 获取跳转url
-    const url = getAMapNavigationUrl({
+    const url = cbDictionary[type]({
       location: {
         lng: data.position[0],
         lat: data.position[1],
       },
-      navigationType: "walkmap",
+      navigationType,
       name: data.name,
       position: {
         lng: selfLocation.position.lng,
@@ -88,18 +84,18 @@ export const MakerPopup: FC<Props> = ({
       <ActionSheet
         visible={navigationListVisible}
         actions={[
-          {
-            text: "腾讯地图",
-            onClick: () => handleNavigation("tencent"),
-          },
+          // {
+          //   text: "腾讯地图",
+          //   onClick: () => handleNavigation("tencent", "walk"),
+          // },
           {
             text: "高德地图",
-            onClick: () => handleNavigation('gaode'),
+            onClick: () => handleNavigation('gaode', "walkmap"),
           },
-          {
-            text: "百度地图",
-            onClick: () => handleNavigation("baidu"),
-          },
+          // {
+          //   text: "百度地图",
+          //   onClick: () => handleNavigation("baidu"),
+          // },
         ]}
         onMaskClick={() => setNavigationListVisible(false)}
       />

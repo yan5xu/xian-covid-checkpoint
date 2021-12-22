@@ -1,6 +1,6 @@
 export type MapType = "tencent" | "gaode" | "baidu";
 
-export type NavigationParams<T> = {
+export type NavigationParams = {
   location: {
     lat: number;
     lng: number;
@@ -10,7 +10,7 @@ export type NavigationParams<T> = {
     lng: number;
   };
   name: string;
-  navigationType: T;
+  navigationType: string;
 };
 /**
  * 根据地图类型、位置获取不同的地图页面跳转链接
@@ -65,8 +65,13 @@ export function getMapApp(
   return url;
 }
 
+// 返回高德的导航url
 export function getAMapNavigationUrl(
-  params: NavigationParams<"walkmap" | "buslist" | "carmap" | "ridemap">
+  params: NavigationParams
 ): string {
   return `https://m.amap.com/navigation/${params.navigationType}/saddr=${params.location.lng},${params.location.lat},我的位置&daddr=${params.position.lng},${params.position.lat},${params.name}`;
+}
+// 返回腾讯的导航url
+export function getTencentNavigationUrl(params: NavigationParams): string{
+  return `https://apis.map.qq.com/uri/v1/routeplan?type=${params.navigationType}&from=我的位置&fromcoord=${params.position.lng},${params.position.lat}&to=${params.name}&tocoord=${params.location.lng},${params.location.lat}&referer=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77`
 }

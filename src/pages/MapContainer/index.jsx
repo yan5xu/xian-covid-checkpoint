@@ -6,6 +6,7 @@ import { Popup } from "zarm";
 import { MakerPopup } from "./components/MarkerPopup";
 
 const getCheckPoint = async () => {
+  console.log("?");
   const res = await axios.post("https://ywhasura.xzllo.com/v1/graphql", {
     query:
       "query getCheckPoint {\n  check_point {\n    id\n    name\n    position\n    type\n  }\n}\n",
@@ -20,7 +21,7 @@ const getCheckPoint = async () => {
 
 // 返回定位坐标
 export const getGeoLocation = async () => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, error) => {
     const AMap = await loadPlugins("AMap.Geolocation");
     const geolocation = new AMap.Geolocation({
       enableHighAccuracy: true, //是否使用高精度定位，默认:true
@@ -30,13 +31,15 @@ export const getGeoLocation = async () => {
       zoomToAccuracy: true, //定位成功后是否自动调整地图视野到定位点
       noGeoLocation: 0,
     });
-  
+
     geolocation.getCurrentPosition((status, result) => {
       if (status === "complete") {
-        resolve(result)
+        resolve(result);
+      } else {
+        error(result);
       }
     });
-  })
+  });
 };
 
 // 绘制海量点LabelMarker包装组件
@@ -83,9 +86,9 @@ const ManyPoints = (props) => {
           content: d.title,
           style: {
             fontSize: 14,
-            fillColor: "#fff",
+            fillColor: "#000000",
             padding: [20, 18],
-            backgroundColor: "black",
+            backgroundColor: "#FFFFFF",
           },
         },
       });
@@ -138,14 +141,20 @@ const Map = () => {
         viewMode="3D"
         center={makerContentPosition}
         zooms={[2, 22]}
-        pitch={45}
-        rotation={20}
+        // pitch={45}
+        // rotation={20}
         onComplete={async (e) => {
-          const selfLocation = await getGeoLocation(e);
-          e.setCenter(selfLocation.position);
-          e.setZoom(18);
+          try {
+            const selfLocation = await getGeoLocation(e);
+            e.setCenter(selfLocation.position);
+          } catch (error) {
+            e.setCenter([108.94703, 34.25943]);
+          }
+          e.setZoom(13);
           // 加载点
+
           const point = await getCheckPoint();
+
           setPoints(point);
         }}
       >

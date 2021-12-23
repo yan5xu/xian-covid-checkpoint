@@ -12,58 +12,6 @@ export type NavigationParams = {
   name: string;
   navigationType: string;
 };
-/**
- * 根据地图类型、位置获取不同的地图页面跳转链接
- * @param {*} mapType 地图类型
- * @param {*} location 经纬度 lat:纬度 lng:经度
- * @param {*} address 详细地址
- */
-export function getMapApp(
-  mapType: MapType,
-  location: {
-    lat: number;
-    lng: number;
-  },
-  address: string
-) {
-  const { lat, lng } = location;
-  let url = "";
-  switch (mapType) {
-    case "tencent":
-      url =
-        "https://apis.map.qq.com/uri/v1/marker?marker=coord:" +
-        lat +
-        "," +
-        lng +
-        ";addr:" +
-        address +
-        ";title:地址&referer=keyfree";
-      break;
-    case "gaode":
-      url =
-        "https://uri.amap.com/marker?position=" +
-        lng +
-        "," +
-        lat +
-        "&name=" +
-        address +
-        "&callnative=1";
-      break;
-    case "baidu":
-      url =
-        "http://api.map.baidu.com/marker?location=" +
-        lat +
-        "," +
-        lng +
-        "&title=地址&content=" +
-        address +
-        "&output=html&src=webapp.reformer.appname&coord_type=gcj02";
-      break;
-    default:
-      break;
-  }
-  return url;
-}
 
 // 返回高德的导航url
 export function getAMapNavigationUrl(
@@ -73,5 +21,10 @@ export function getAMapNavigationUrl(
 }
 // 返回腾讯的导航url
 export function getTencentNavigationUrl(params: NavigationParams): string{
-  return `https://apis.map.qq.com/uri/v1/routeplan?type=${params.navigationType}&from=我的位置&fromcoord=${params.position.lng},${params.position.lat}&to=${params.name}&tocoord=${params.location.lng},${params.location.lat}&referer=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77`
+  return `https://apis.map.qq.com/uri/v1/routeplan?type=${params.navigationType}&from=我的位置&fromcoord=${params.position.lat},${params.position.lng}&to=${params.name}&tocoord=${params.location.lat},${params.location.lng}&policy=1&referer=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77`
+}
+
+// 返回百度的导航url
+export function getBaiduNavigationUrl(params: NavigationParams): string{
+  return `https://api.map.baidu.com/direction?origin=latlng:${params.location.lat},${params.location.lng}|name:我的位置&destination=latlng:${params.position.lat},${params.position.lng}|name:${params.name}&mode=${params.navigationType}&origin_region=${`西安`}&destination_region=${`西安`}&src=webapp.baidu.openAPIdemo&output=html`
 }

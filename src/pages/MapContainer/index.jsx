@@ -6,7 +6,6 @@ import { Popup } from "zarm";
 import { MakerPopup } from "./components/MarkerPopup";
 
 const getCheckPoint = async () => {
-  console.log("?");
   const res = await axios.post("https://ywhasura.xzllo.com/v1/graphql", {
     query:
       "query getCheckPoint {\n  check_point {\n    id\n    name\n    position\n    type\n  }\n}\n",
@@ -141,8 +140,6 @@ const Map = () => {
         viewMode="3D"
         center={makerContentPosition}
         zooms={[2, 22]}
-        // pitch={45}
-        // rotation={20}
         onComplete={async (e) => {
           try {
             const selfLocation = await getGeoLocation(e);
@@ -150,11 +147,9 @@ const Map = () => {
           } catch (error) {
             e.setCenter([108.94703, 34.25943]);
           }
-          e.setZoom(13);
+          e.setZoom(17);
           // 加载点
-
           const point = await getCheckPoint();
-
           setPoints(point);
         }}
       >

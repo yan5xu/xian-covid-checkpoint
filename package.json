@@ -12,7 +12,7 @@
     "zarm": "^2.9.13"
   },
   "scripts": {
-    "start": "vite",
+    "start": "vite --host 0.0.0.0",
     "start:test": "vite --mode test",
     "start:prod": "vite --mode prod",
     "build": "vite build"

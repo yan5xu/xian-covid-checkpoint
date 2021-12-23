@@ -2,9 +2,9 @@ import { FC, useState } from "react";
 import { Loading, Popup, Button, ActionSheet, ActivityIndicator } from "zarm";
 import {
   MapType,
-  getMapApp,
   getAMapNavigationUrl,
   getTencentNavigationUrl,
+  getBaiduNavigationUrl,
   NavigationParams,
 } from "../../../../utils/map";
 import "./index.scss";
@@ -40,7 +40,8 @@ export const MakerPopup: FC<Props> = ({
     const cbDictionary: Record<MapType, (params: NavigationParams) => string> =
       {
         gaode: getAMapNavigationUrl,
-        // "tencent": getTencentNavigationUrl,
+        tencent: getTencentNavigationUrl,
+        baidu: getBaiduNavigationUrl
       };
     Loading.show({
       content: <ActivityIndicator size="lg" />,
@@ -85,18 +86,18 @@ export const MakerPopup: FC<Props> = ({
       <ActionSheet
         visible={navigationListVisible}
         actions={[
-          // {
-          //   text: "腾讯地图",
-          //   onClick: () => handleNavigation("tencent", "walk"),
-          // },
+          {
+            text: "腾讯地图",
+            onClick: () => handleNavigation("tencent", "walk"),
+          },
           {
             text: "高德地图",
             onClick: () => handleNavigation("gaode", "walkmap"),
           },
-          // {
-          //   text: "百度地图",
-          //   onClick: () => handleNavigation("baidu"),
-          // },
+          {
+            text: "百度地图",
+            onClick: () => handleNavigation("baidu", "walking"),
+          },
         ]}
         onMaskClick={() => setNavigationListVisible(false)}
       />

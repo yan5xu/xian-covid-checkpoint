@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import { Amap, useAmap, loadPlugins } from "@amap/amap-react";
 import "./index.scss";
 import axios from "axios";
-import { Popup } from "zarm";
 import { MakerPopup } from "./components/MarkerPopup";
 
 const getCheckPoint = async () => {
@@ -112,9 +111,10 @@ const ManyPoints = (props) => {
   return null;
 };
 
-const Map = () => {
+const Main = () => {
   const [points, setPoints] = useState([]);
   // 存储本身
+  const [mapSelf, setMapSelf] = useState();
   // 存储当前活动点信息（被点击）
   const [activePoint, setActivePoint] = useState();
   // 存储活动点信息的被缓存坐标
@@ -124,6 +124,25 @@ const Map = () => {
   );
   // 当前详情popup是否显示
   const [detailPopupVisible, setDetailPopupVisible] = useState(false);
+  const map = useRef();
+
+  setTimeout(() => {
+    if (map.current && !mapSelf) {
+      setMapSelf(map.current);
+    }
+  }, 1000);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(async () => {
+    if (mapSelf) {
+      const selfLocation = await getGeoLocation(mapSelf);
+      mapSelf.setCenter(selfLocation.position);
+      mapSelf.setZoom(17);
+      // 加载点
+      const point = await getCheckPoint();
+      setPoints(point);
+    }
+  }, [mapSelf]);
 
   return (
     <div className="home_div">
@@ -137,21 +156,10 @@ const Map = () => {
         </h4>
       </div>
       <Amap
+        ref={map}
         viewMode="3D"
         center={makerContentPosition}
         zooms={[2, 22]}
-        onComplete={async (e) => {
-          try {
-            const selfLocation = await getGeoLocation(e);
-            e.setCenter(selfLocation.position);
-          } catch (error) {
-            e.setCenter([108.94703, 34.25943]);
-          }
-          e.setZoom(17);
-          // 加载点
-          const point = await getCheckPoint();
-          setPoints(point);
-        }}
       >
         {/* 绘制点的组件 */}
         <ManyPoints
@@ -175,4 +183,4 @@ const Map = () => {
   );
 };
 
-export default Map;
+export default Main;

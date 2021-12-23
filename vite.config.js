@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite'
+import { resolve } from "path"
 import react from '@vitejs/plugin-react'
 import styleImport from 'vite-plugin-style-import'
+import { viteVConsole } from 'vite-plugin-vconsole';
 
 export default defineConfig({
   server: {
@@ -19,7 +21,16 @@ export default defineConfig({
     }
   },
   plugins: [
-    react(), 
+    react(),
+    viteVConsole({
+      entry: resolve('src/index.jsx'),
+      localEnabled: true,
+      enabled: true,
+      config: {
+        maxLogNumber: 1000,
+        theme: 'dark'
+      }
+    }),
     styleImport({
       libs: [
         {

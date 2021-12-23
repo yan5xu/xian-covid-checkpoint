@@ -64,7 +64,7 @@ export const MakerPopup: FC<Props> = ({
     // 关闭所有弹窗
     setNavigationListVisible(false);
     onClose && onClose();
-    window.location.href(url);
+    window.location.href = url;
   };
   return (
     <>

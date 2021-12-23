@@ -135,8 +135,12 @@ const Main = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(async () => {
     if (mapSelf) {
-      const selfLocation = await getGeoLocation(mapSelf);
-      mapSelf.setCenter(selfLocation.position);
+      try {
+        const selfLocation = await getGeoLocation(mapSelf);
+        mapSelf.setCenter(selfLocation.position);
+      } catch {
+        mapSelf.setCenter([108.94703, 34.25943]);
+      }
       mapSelf.setZoom(17);
       // 加载点
       const point = await getCheckPoint();

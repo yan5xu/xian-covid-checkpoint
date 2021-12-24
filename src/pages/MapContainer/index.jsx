@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import AMapLoader from "@amap/amap-jsapi-loader";
 import "./index.scss";
 import axios, { AxiosInstance } from "axios";
+import { NavLink } from "react-router-dom";
 
 const defaultSize = 0;
 
@@ -146,10 +147,20 @@ const Map = () => {
                 title: point[i].title,
                 icon: point[i].type === "24小时" ? retIcon : blueIcon,
               });
+              let moreInfo = ``;
+              if (point[i].info && point[i].info.checkAt) {
+                moreInfo = `<div>来源:${point[i].info.source}</div><div>发布:${point[i].info.publishAt}</div><div>收录:${point[i].info.checkAt}</div>`;
+              } else {
+                moreInfo = `<div>来源:未确认</div>`;
+              }
+              if (point[i].info && point[i].info.phoneStatus) {
+                moreInfo =
+                  moreInfo + `<div>电话核实:${point[i].info.phoneStatus}</div>`;
+              }
               marker.content =
-                point[i].type === "24小时"
+                (point[i].type === "24小时"
                   ? `<div>${point[i].title}</div>${point[i].info.phone}`
-                  : `<div>${point[i].title}</div>`;
+                  : `<div>${point[i].title}</div>`) + moreInfo;
               marker.on("click", markerClick);
               // 满足条件后将标点放入标点数组
               markerArr.push(marker);
@@ -191,6 +202,10 @@ const Map = () => {
     window.location.href =
       "https://cloud.seatable.cn/dtable/forms/30f44612-f350-4ff2-b928-6fce6f9aaac4/";
   };
+  const jumpToHelp = () => {
+    window.location.href =
+      "https://cloud.seatable.cn/dtable/forms/30f44612-f350-4ff2-b928-6fce6f9aaac4/";
+  };
 
   const isInWechatMP = () => {
     return (
@@ -215,16 +230,16 @@ const Map = () => {
       {isInWechatMP() ? (
         <>
           <div className="addInfo">
-            <button className="button-yellow" onClick={jumpTo}>
-              考研学子
-            </button>
+            <NavLink to="/postgraduate-help">
+              <button className="button-yellow">考研学子</button>
+            </NavLink>
           </div>
         </>
       ) : (
         <div className="addInfo">
-          <button className="button-yellow" onClick={jumpTo}>
-            考研学子
-          </button>
+          <NavLink to="/postgraduate-help">
+            <button className="button-yellow">考研学子</button>
+          </NavLink>
           <button className="button-yellow" onClick={jumpTo}>
             提供信息
           </button>

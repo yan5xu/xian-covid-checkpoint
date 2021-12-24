@@ -1,31 +1,34 @@
-.home_div,#map{
+.home_div,
+#map {
     padding: 0px;
     margin: 0px;
     width: 100%;
     height: 100%;
 }
-.map-title{
-    position:absolute;
+
+.map-title {
+    position: absolute;
     z-index: 1;
     width: 100%;
     height: 100px;
     background-color: rgba(27, 25, 27, 0.5);
 
 }
-h4{
-   position:absolute;
-   left: 4px;
-   z-index: 2;
-   font-size: 8;
-   color: white;
+
+h4 {
+    position: absolute;
+    left: 4px;
+    z-index: 2;
+    font-size: 8;
+    color: white;
 }
 
-.amap-marker-label{
+.amap-marker-label {
     border: 0;
     background-color: transparent;
 }
 
-.info{
+.info {
     position: relative;
     top: 0;
     right: 0;
@@ -40,4 +43,97 @@ h4{
     padding: 8px 8px;
     border-radius: 10px;
     text-align: center;
+}
+
+.amap-icon {
+    // width: 19px;
+    // aspect-ratio: auto 19 / 32;
+    // height: 32px;
+
+    // max-width: none !important;
+    // max-height: none !important;
+}
+
+.addInfo {
+    position: fixed; //关键
+    height: 90px;
+    width: 40px;
+    bottom: 70px;
+    right: 12px;
+    background: #b4d145;
+}
+
+
+
+@function hsb($h-hsb, $s-hsb, $b-hsb, $a: 1) {
+    @if $b-hsb==0 {
+        @return hsla(0, 0, 0, $a);
+    }
+
+    @else {
+        $l-hsl: ($b-hsb/2) * (2 - ($s-hsb/100));
+        $s-hsl: ($b-hsb * $s-hsb) / if($l-hsl < 50, $l-hsl * 2, 200 - $l-hsl * 2);
+        @return hsla($h-hsb, $s-hsl, $l-hsl, $a);
+    }
+}
+
+@function hsb-saturate($s, $a) {
+    @if $s==0 {
+        @return 0;
+    }
+
+    @else {
+        @return $s+$a;
+    }
+}
+
+@mixin buttonize($h, $s, $b, $light: 0) {
+
+    $color: hsb($h, $s, $b);
+    $color-dark: hsb($h, hsb-saturate($s, 10), $b);
+    $inset-top: inset 0 1px 0 hsb($h, $s - 20, $b + 10);
+    $inset-bottom: inset 0 -1px 0 hsb($h, hsb-saturate($s, 10), $b - 10);
+    $inset: inset 0 0 0 1px hsb($h, hsb-saturate($s, - 10), $b);
+
+    background-color: $color;
+    background-image: linear-gradient(to bottom, $color, $color-dark);
+    border: 1px solid hsb($h, hsb-saturate($s, 20), $b - 20);
+    box-shadow: $inset-top,
+        $inset-bottom,
+        $inset,
+        0 2px 4px rgba(black, 0.2);
+
+    @if $light==1 {
+        color: hsb($h, hsb-saturate($s, 40), $b - 40);
+        text-shadow: 0 1px 0 rgba(white, 0.5);
+    }
+
+    @else {
+        color: white;
+        text-shadow: 0 1px 2px rgba(black, 0.3);
+    }
+
+    &:hover,
+    &:focus {
+        background: $color-dark;
+        border-color: hsb($h, hsb-saturate($s, 40), $b - 40);
+        box-shadow: $inset-top,
+            $inset-bottom,
+            $inset;
+    }
+
+    &:active {
+        background: $color-dark;
+        box-shadow: inset 0 2px 3px rgba(black, 0.2);
+    }
+
+    .fa {
+        color: hsb($h, hsb-saturate($s, 20), $b - 20);
+        text-shadow: 0 1px 0 rgba(white, 0.3);
+    }
+
+}
+
+.button-yellow {
+    @include buttonize(49, 54, 99, 1);
 }

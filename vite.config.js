@@ -4,9 +4,16 @@ import styleImport from 'vite-plugin-style-import'
 
 export default defineConfig({
   server: {
-    port: 3000,
+    port: 8990,
     host: '0.0.0.0',
     open: true
+  },
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: true
+      }
+    }
   },
   build: {
     target: 'es2015',
@@ -19,17 +26,11 @@ export default defineConfig({
     }
   },
   plugins: [
-    react(),
+    react(), 
     styleImport({
-      libs: [
-        {
-          libraryName: 'zarm',
-          esModule: true,
-          resolveStyle: (name) => {
-            return `zarm/es/${name}/style/index`
-          },
-        },
-      ],
+      resolves: [() => {
+
+      }]
     })
   ]
 })

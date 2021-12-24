@@ -213,11 +213,22 @@ const Map = () => {
       </div>
       <div id="mapcontainer" className="map" style={{ height: "100%" }} />
       {isInWechatMP() ? (
-        <></>
+        <>
+          <div className="addInfo">
+            <button className="button-yellow" onClick={jumpTo}>
+              考研学子
+            </button>
+          </div>
+        </>
       ) : (
-        <button className="addInfo button-yellow" onClick={jumpTo}>
-          反馈信息
-        </button>
+        <div className="addInfo">
+          <button className="button-yellow" onClick={jumpTo}>
+            考研学子
+          </button>
+          <button className="button-yellow" onClick={jumpTo}>
+            提供信息
+          </button>
+        </div>
       )}
     </div>
   );

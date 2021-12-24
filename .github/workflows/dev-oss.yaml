@@ -1,4 +1,4 @@
-name: release-oss
+name: dev-oss
 on:
   push:
     branches:
@@ -21,7 +21,7 @@ jobs:
         with:
             accessKeyId: ${{ secrets.ACCESS_KEY_ID }}
             accessKeySecret: ${{ secrets.ACCESS_KEY_SECRET }}
-            bucket: "yw-public777"
+            bucket: "yw-public1111"
             endpoint: "oss-cn-beijing.aliyuncs.com"
             folder: "build"
             skipSetting: true

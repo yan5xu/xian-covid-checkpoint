@@ -1,0 +1,27 @@
+name: dev-oss
+on:
+  push:
+    branches:
+      - dev
+jobs:
+  dev:
+    name: dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: 切换仓库
+        uses: actions/checkout@master
+      - name: 准备Node环境
+        uses: actions/setup-node@master
+        with:
+          node-version: 12.13.0
+      - name: 安装依赖以及编译
+        run: npm i && CI= npm run build
+      - name: 上传到OSS
+        uses: fangbinwei/aliyun-oss-website-action@v1
+        with:
+            accessKeyId: ${{ secrets.ACCESS_KEY_ID }}
+            accessKeySecret: ${{ secrets.ACCESS_KEY_SECRET }}
+            bucket: "yw-public1111"
+            endpoint: "oss-cn-beijing.aliyuncs.com"
+            folder: "build"
+            skipSetting: true
